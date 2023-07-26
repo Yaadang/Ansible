@@ -1,0 +1,46 @@
+---
+- name: Install Node and NPM
+  hosts: droplet
+  tasks:
+    - name: Update apt repo and cache
+      ansible.builtin.apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+    - name: install Nodejs and npm
+      apt:
+        pkg:
+        - nodejs
+        - npm
+
+
+- name: Create new user for the node app
+  hosts: droplet
+  tasks:
+    - name: create linux user
+      user:
+        name: nodejs
+        comment: nodejs admin
+        group: admin
+
+
+- name: Deploy nodejs app
+  hosts: droplet
+  become_user: nodejs
+  become: True
+  tasks: 
+    - name: Unpack the file
+      unarchive: 
+        src: /home/vboxuser/Downloads/nodejs-app-1.0.0.tgz
+        dest: /home/nodejs/
+    - name: install dependencies
+      npm:
+        path: /home/nodejs/package/
+    - name: start the application
+      command:
+        chdir: /home/nodejs/package/app
+        cmd: node server 
+      async: 1000
+      poll: 0
+    - name: Check if the app is running
+      shell: ps aux | grep '[n]ode'
+      register: app_status
+    - debug: msg={{app_status.stdout_lines}}
+
