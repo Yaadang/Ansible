@@ -1,0 +1,88 @@
+---
+- name: Install Java and Net-tools
+  hosts: nexus-droplet
+  tasks:
+    - name: Update apt and cache
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+    - name: Install Java8
+      apt: name=openjdk-8-jre-headless
+    - name: Install net-tools
+      apt: name=net-tools
+
+- name: Download and unpack nexus installer
+  hosts: nexus-droplet
+  tasks:
+    - name: Check if the folder already exists
+      stat:
+        path: /opt/nexus
+      register: stat_result
+    - name: Download Nexus
+      get_url:
+        url: https://download.sonatype.com/nexus/3/latest-unix.tar.gz
+        dest: /opt/
+      register: download_result
+    - name: Unpack installer
+      unarchive:
+        src: "{{download_result.dest}}"
+        dest: /opt/
+        remote_src: True
+      when: not stat_result.stat.exists
+    - name: find File
+      find:
+        paths: /opt
+        pattern: "nexus-*"
+        file_type: directory
+      register: find_result
+    - name: Rename Nexus Folder
+      shell: mv {{find_result.files[0].path}} /opt/nexus
+      when: not stat_result.stat.exists
+
+- name: Create nexus user to own nexus folder
+  hosts: nexus-droplet
+  tasks:
+  - name: Ensure the group exists
+    group:
+      name: nexus
+      state: present
+  - name: Create nexus user
+    user: 
+      name: nexus
+      group: nexus
+  - name: Make the nexus user owner of nexus folder
+    file:
+      path: /opt/nexus
+      state: directory
+      owner: nexus
+      group: nexus
+      recurse: True
+  - name: Make the nexus user owner of sonatype folder
+    file:
+      path: /opt/sonatype-work
+      state: directory
+      owner: nexus
+      group: nexus
+      recurse: True
+
+- name: Start nexus with a nexus user
+  hosts: nexus-droplet
+  become: True
+  become_user: nexus
+  tasks:
+    - name: set run_as_user nexus
+      blockinfile: 
+        path: /opt/nexus/bin/nexus.rc
+        block: |
+          run_as_user="nexus"
+    - name: Start Nexus
+      command: /opt/nexus/bin/nexus start
+    - name: check with ps
+      shell: ps aux | grep nexus
+      register: app_status
+    - debug: msg={{app_status.stdout_lines}}
+    - name: wait a min
+      pause:
+        minutes: 1
+    - name: check with netstat
+      shell: netstat -plnt
+      register: appt_status
+    - debug: msg={{app_status.stdout_lines}}
