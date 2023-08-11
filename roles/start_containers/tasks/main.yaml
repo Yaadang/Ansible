@@ -11,4 +11,4 @@
 
 - name: Start container from compose
   community.docker.docker_compose: 
-    project_src: /home/nana
+    project_src: /home/docker
