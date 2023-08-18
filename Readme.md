@@ -20,19 +20,18 @@ This project automates the deployment and configuration of a Kubernetes cluster 
    ```bash
    terraform init
    terraform apply
-
+   ```
 This will provision the Kubernetes cluster.
 
-    Kubeconfig Environment Setup: Ensure that the kubeconfig environment variable is set up to point to the appropriate configuration file.
+Kubeconfig Environment Setup: Ensure that the kubeconfig environment variable is set up to point to the appropriate configuration file.
 
-    bash
+   ```bash
+    export KUBECONFIG=/path/to/kubeconfig
+   ```
+2 . **Run the Ansible Playbook**: Use the following command to run the Ansible play titled "Deploy app in new namespace":
 
-export KUBECONFIG=/path/to/kubeconfig
+   ```bash
+     ansible-playbook deploy-app-playbook.yml
+   ```
 
-Run the Ansible Playbook: Use the following command to run the Ansible play titled "Deploy app in new namespace":
-
-bash
-
-ansible-playbook deploy-app-playbook.yml
-
-Ensure you have the appropriate inventory and hosts configured for Ansible to run the play
+3. Ensure you have the appropriate inventory and hosts configured for Ansible to run the play
