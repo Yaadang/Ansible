@@ -1,0 +1,88 @@
+---
+- name: Wait for ssh connection
+  hosts: all
+  gather_facts: False
+  tasks:
+   -  name: Ensure ssh port is open
+      vars:
+        ansible_connection: local
+        ansible_python_interpreter: /usr/bin/python
+      wait_for: 
+        port: 22
+        delay: 10
+        timeout: 100
+        search_regex: OpenSSH
+        host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+      
+
+- name: Install python3 and docker
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install python3 and docker
+      vars:
+        ansible_python_interpreter: /usr/bin/python
+      yum:
+        name: 
+          - python3
+          - docker
+          - python3-requests
+          - python-pip
+        update_cache: yes
+        state: present
+    - name: Install docker python module
+      pip:
+        name: 
+          - docker
+          - docker-compose
+          - requests
+          - urllib3==1.26.6
+
+- name: Install Docker-compose
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install docker-compose
+      get_url: 
+        url: https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: +x
+
+- name: Start Docker
+  hosts: all
+  become: yes
+  tasks:
+    - name: start
+      systemd:
+        name: docker
+        state: started
+
+- name: Add ec2-user to docker grp
+  hosts: all
+  become: yes
+  tasks:
+    - name: add ec2-user to docker grp
+      user:
+        name: ec2-user
+        groups: docker
+        append: yes
+    - name: reconnect to server session
+      meta: reset_connection
+  
+- name: Pull and start redis Docker image
+  hosts: all
+  tasks:
+    - name: pull image
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+      docker_image:
+        name: redis
+        source: pull
+    - name: start image
+      docker_container:
+        name: my_redis
+        image: redis
+        state: started
+        ports:
+          - "6379:6379"
+
