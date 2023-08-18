@@ -1,6 +1,6 @@
 # Kubernetes Cluster Configuration with Ansible
 
-This project automates the deployment and configuration of a Kubernetes cluster using Terraform and Ansible.
+This project automates the deployment and configuration of a Kubernetes cluster using Terraform and Ansible. 
 
 ## Accomplishments
 
@@ -12,6 +12,7 @@ This project automates the deployment and configuration of a Kubernetes cluster 
 
 - [Terraform](https://github.com/Yaadang/Terraform/tree/feature/eks)
 - [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
+- [Dependencies for K8s module] (https://docs.ansible.com/ansible/latest/collections/kubernetes/core/k8s_module.html)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
 
 ## Quick Start
@@ -31,7 +32,7 @@ Kubeconfig Environment Setup: Ensure that the kubeconfig environment variable is
 2 . **Run the Ansible Playbook**: Use the following command to run the Ansible play titled "Deploy app in new namespace":
 
    ```bash
-     ansible-playbook deploy-app-playbook.yml
+     ansible-playbook deploy-k8s.yml
    ```
 
 3. Ensure you have the appropriate inventory and hosts configured for Ansible to run the play
