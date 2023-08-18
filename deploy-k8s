@@ -10,6 +10,6 @@
         state: present
     - name: Deploy nginx app 
       community.kubernetes.k8s:
-        src: ~/Demo-projects/Simple-K8s-Files/nginx-config.yaml
+        src: ~/nginx-config.yaml
         state: present
         namespace: my-app
