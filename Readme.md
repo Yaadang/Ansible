@@ -12,7 +12,7 @@ This project automates the deployment and configuration of a Kubernetes cluster 
 
 - [Terraform](https://github.com/Yaadang/Terraform/tree/feature/eks)
 - [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
-- [Dependencies for K8s module] (https://docs.ansible.com/ansible/latest/collections/kubernetes/core/k8s_module.html)
+- [Dependencies for K8s module](https://docs.ansible.com/ansible/latest/collections/kubernetes/core/k8s_module.html)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
 
 ## Quick Start
