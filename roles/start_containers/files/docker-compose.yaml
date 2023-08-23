@@ -1,7 +1,7 @@
 version: '3'
 services:
   java-app:
-    image: yaadang/myrepo:java-maven-2.0
+    image: yaadang/myrepo:jma-2.0
     environment:
       - DB_USER=user
       - DB_PWD=pass
